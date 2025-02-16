@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZVex AI 3.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            height: 100vh;
+            display: flex;
+            color: #00f7ff;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+      /* Sidebar 3D Effect */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(160deg, #000 85%, #00f7ff 15%);
+    border-right: 3px solid #00f7ff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: inset 5px 5px 15px #000000, inset -5px -5px 15px #0ff;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 90;
+    transition: transform 0.4s ease-in-out, opacity 0.2s;
+    transform: translateX(-105%);
+    opacity: 0;
+}
+
+/* Saat Sidebar Muncul */
+.sidebar.hidden {
+    transform: translateX(0%);
+    opacity: 1;
+}
+
+/* Tombol Toggle Sidebar */
+.toggle-sidebar-btn {
+    position: fixed;
+    left: 15px;
+    top: 15px;
+    background: linear-gradient(145deg, #00f7ff 20%, #000 80%);
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: bold;
+    box-shadow: 0px 4px 10px rgba(0, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toggle-sidebar-btn i {
+    font-size: 18px;
+}
+
+/* Hover Effect */
+.toggle-sidebar-btn:hover {
+    background: #00d8e0;
+    transform: scale(1.1);
+}
+
+/* Sidebar Title */
+.sidebar h2 {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #00f7ff;
+    text-shadow: 0px 0px 5px cyan, 0px 0px 10px cyan;
+}
+
+/* Chat History */
+.chat-history {
+    margin-top: 15px;
+    overflow-y: auto;
+    max-height: 60vh;
+    padding: 10px;
+    border-top: 2px solid cyan;
+}
+
+/* New Chat Button */
+.new-chat-btn {
+    width: 100%;
+    padding: 10px 15px;
+    background: linear-gradient(145deg, #00f7ff 20%, #000000 80%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(0, 255, 255, 0.5);
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.new-chat-btn i {
+    font-size: 18px;
+}
+
+/* Hover Effect */
+.new-chat-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 15px rgba(0, 255, 255, 0.8);
+}
+
+
+        .new-chat-btn {
+            background: linear-gradient(45deg, #002626, #001919);
+            color: #00f7ff;
+            border: 2px solid #00f7ff;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px #00f7ff33;
+        }
+
+        .new-chat-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px #00f7ff55;
+        }
+
+        .chat-history {
+            background-color: black;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: #002020;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #00f7ff33;
+        }
+
+        .chat-item:hover {
+            background: #003030;
+            transform: translateX(5px);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #001515 0%, #000 100%);
+            padding: 1rem;
+            border-bottom: 2px solid #00f7ff33;
+            height: 70px;
+            box-shadow: 0 5px 15px #00f7ff22;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin: 10px 0;
+            position: relative;
+            transition: transform 0.3s;
+            border: 1px solid transparent;
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        .user-message {
+            background: linear-gradient(45deg, #002626, #001919);
+            align-self: flex-end;
+            box-shadow: 5px 5px 15px #00f7ff33;
+            border-image: linear-gradient(45deg, #00f7ff, transparent) 1;
+        }
+
+        .ai-message {
+            background: linear-gradient(45deg, #001919, #002626);
+            align-self: flex-start;
+            box-shadow: -5px 5px 15px #00f7ff33;
+            border-image: linear-gradient(135deg, #00f7ff, transparent) 1;
+        }
+
+        .input-container {
+            padding: 20px;
+            background: linear-gradient(180deg, #001515 0%, #000 100%);
+            border-top: 2px solid #00f7ff33;
+            display: flex;
+            gap: 15px;
+        }
+
+        input {
+            flex: 1;
+            padding: 15px 25px;
+            background: #002020;
+            border: 2px solid #00f7ff33;
+            border-radius: 30px;
+            color: #00f7ff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: #00f7ff;
+            box-shadow: 0 0 15px #00f7ff33;
+        }
+
+        button {
+            background: linear-gradient(45deg, #002626, #001919);
+            border: 2px solid #00f7ff;
+            padding: 15px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #00f7ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px #00f7ff33;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px #00f7ff55;
+        }
+
+        button i {
+            font-size: 20px;
+        }
+
+        /* 3D Effects */
+        .message:hover {
+            transform: translateZ(10px);
+        }
+
+        .chat-item {
+            transform: translateZ(0);
+            transition: transform 0.3s;
+        }
+
+        .chat-item:hover {
+            transform: translateZ(10px);
+        }
+        h1{
+          text-align: center;
+        }
+        .message-time{
+          color: white;
+          opacity: 50%;
+          font-size: 0.7rem;
+          position: right;
+        }
+        
+        
+        
+        
+        .toggle-sidebar-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-right: 1rem;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.toggle-sidebar-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.header h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header {
+        padding: 0.8rem 1rem;
+        height: 60px;
+    }
+    
+    .header h1 {
+        font-size: 1.4rem;
+    }
+    
+    .toggle-sidebar-btn {
+        font-size: 1.3rem;
+        
+    }
+    .toggle-sidebar-btn.clicked {
+    left: calc(100% - 50px); /* Geser ke kanan (sesuaikan 50px dengan lebar tombol) */
+    }
+    /* Sidebar Menu */
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.sidebar-menu li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: linear-gradient(145deg, #001515 20%, #000 80%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 2px 8px rgba(0, 255, 255, 0.3);
+    margin-bottom: 10px;
+}
+
+.sidebar-menu li i {
+    font-size: 18px;
+    color: cyan;
+}
+
+/* Hover Effect */
+.sidebar-menu li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 12px rgba(0, 255, 255, 0.6);
+    background: #00f7ff33;
+}
+.content-section {
+    display: none;
+    padding: 20px;
+}
+#ai {
+    display: block;
+}
+.sidebar-menu li {
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+.sidebar-menu li:hover {
+    background: #00f7ff33;
+}
+
+
+
+/* Layout chat-container full layar */
+.chat-container {
+    position: absolute;
+    top: 60px; /* Jarak dari header */
+    bottom: 60px; /* Jarak dari input */
+    left: 0;
+    right: 0;
+    overflow-y: auto; /* Biar bisa scroll kalau chat panjang */
+    padding: 15px;
+    background: #001515;
+    color: #fff;
+    
+    height: calc(100vh - 120px); /* Biar tetap responsif sesuai layar */
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(circle at center, #001010 0%, #000 100%);
+}
+
+
+/* Input tetap di bawah kayak footer */
+.input-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px; /* Sesuai jarak yang lo mau */
+    background: #000;
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    box-shadow: 0 -2px 10px rgba(0, 247, 255, 0.2);
+}
+
+/* Style input biar rapi */
+.input-container input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    background: #002020;
+    color: #00f7ff;
+}
+
+/* Style tombol kirim */
+.input-container button {
+    margin-left: 10px;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background: #00f7ff;
+    color: #000;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.input-container button:hover {
+    background: #00d8e0;
+}
+.cpp {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px; /* Sesuai jarak yang lo mau */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Biar kontennya ada di tengah */
+    padding: 10px 15px;
+    background: linear-gradient(160deg, #001515 0%, #000 100%);
+    color: #00f7ff;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 -2px 10px rgba(0, 247, 255, 0.3);
+    border-top: 2px solid rgba(0, 247, 255, 0.2);
+    z-index: 100;
+}
+
+/* Kalau mau ada efek hover */
+.cpp:hover {
+    background: linear-gradient(160deg, #002020 0%, #000 100%);
+    box-shadow: 0 -2px 15px rgba(0, 247, 255, 0.4);
+}
+
+
+.about-container {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(160deg, #001515 0%, #000 100%);
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 247, 255, 0.2);
+    color: #fff;
+}
+
+.about-title img {
+    max-width: 100%;
+}
+
+.profile-stats img {
+    margin: 5px;
+}
+
+.about-content {
+    text-align: left;
+    max-width: 600px;
+    margin: auto;
+}
+
+.about-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.about-content ul li {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.tech-stack {
+    margin-top: 20px;
+}
+
+.tech-icons img {
+    margin: 5px;
+}
+
+.github-stats img {
+    margin-top: 10px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.connect a {
+    display: inline-block;
+    margin: 10px;
+    transition: transform 0.3s;
+}
+
+.connect a:hover {
+    transform: scale(1.1);
+}
+
+#apis {
+    background-color: #0a0a0a; /* Latar belakang hitam */
+    color: #d0d0d0; /* Warna teks abu-abu terang */
+    padding: 20px;
+    overflow-y: auto; /* Tambahkan scrollbar jika konten melebihi batas */
+    padding-right: 15px; /* Supaya tidak kena scrollbar */
+    scrollbar-width: thin; /* Untuk Firefox */
+    scrollbar-color: #00ffff #0a0a0a; /* Warna scrollbar */
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 255, 255, 0.2); /* Efek glow cyan */
+}
+
+#apis h2 {
+    color: #00ffff; /* Warna cyan mencolok */
+    text-align: center;
+    text-transform: uppercase;
+    border-bottom: 2px solid #00ffff;
+    padding-bottom: 10px;
+}
+
+#apis h3 {
+    color: #00cccc; /* Warna cyan yang lebih gelap */
+    margin-top: 20px;
+    border-bottom: 1px solid #00cccc;
+    padding-bottom: 5px;
+}
+
+#apis ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#apis ul li {
+    background-color: #111; /* Latar item lebih gelap */
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    transition: 0.3s ease-in-out;
+    border-left: 5px solid #00ffff; /* Garis samping cyan */
+}
+
+#apis ul li:hover {
+    background-color: #222; /* Warna lebih terang saat hover */
+    box-shadow: 0px 0px 10px rgba(0, 255, 255, 0.3);
+}
+
+#apis ul li strong {
+    color: #00ffff; /* Warna cyan mencolok */
+    font-size: 18px;
+}
+
+#apis ul li p {
+    margin: 5px 0;
+    color: #b0b0b0; /* Warna teks lebih soft */
+}
+
+#apis ul li a {
+    color: #00ffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#apis ul li a:hover {
+    text-decoration: underline;
+    color: #00cccc;
+}
+
+#apis ol {
+    padding-left: 20px;
+    margin-top: 5px;
+}
+
+#apis ol li {
+    color: #a0a0a0;
+    margin-bottom: 5px;
+}
+
+#apis ol li::marker {
+    color: #00ffff; /* Warna angka list */
+    font-weight: bold;
+}
+
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+<div class="sidebar">
+    <h2>Menu</h2>
+
+    <!-- Menu Navigasi -->
+    <ul class="sidebar-menu">
+        <li onclick="showPage('ai')">
+            <i class="fas fa-robot"></i> ZVex AI
+        </li>
+        <li onclick="showPage('apis')">
+            <i class="fas fa-code"></i> APIs
+        </li>
+        <li onclick="showPage('about')">
+            <i class="fas fa-info-circle"></i> About
+        </li>
+        <li onclick="showPage('history')">
+            <i class="fas fa-history"></i> Chat History
+        </li>
+    </ul>
+
+    <!-- Tombol New Chat -->
+    <button class="new-chat-btn" onclick="createNewChat()">
+        <i class="fas fa-plus"></i> New Chat
+    </button>
+
+    <!-- Chat History -->
+    <div class="chat-history" id="chatHistory"></div>
+<p class="cpp">© 2025 ZVex AI. All rights reserved.</p>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="header">
+        <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+        <h1>ZVex AI 3.0</h1>
+    </div>
+
+    <div id="ai" class="content-section">
+        <div class="chat-container" id="chatContainer"></div>
+        <div class="input-container">
+            <input type="text" id="userInput" placeholder="Enter your message...">
+            <button onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i> Send
+            </button>
+        </div>
+    </div>
+
+<div id="apis" class="content-section">
+    <h2>🛠 APIs</h2>
+    <p>Dokumentasi API tersedia di sini.</p>
+
+    <h3>🔍 AI APIs</h3>
+    <ul>
+        <li>
+            <strong>OpenAI API</strong>  
+            <p>API untuk akses model AI seperti GPT-4 untuk pembuatan teks dan analisis bahasa.</p>
+            <p><strong>API URL:</strong> <code>https://api.openai.com/v1/</code></p>
+            <p><strong>Cara mendapatkan API Key:</strong></p>
+            <ol>
+                <li>Kunjungi <a href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key" target="_blank">OpenAI API Keys</a></li>
+                <li>Masuk atau daftar akun OpenAI.</li>
+                <li>Buka bagian API Keys dan buat kunci baru.</li>
+                <li>Salin API Key yang dihasilkan.</li>
+            </ol>
+        </li>
+        
+        <li>
+            <strong>Google Cloud Vision API</strong>  
+            <p>Menganalisis gambar untuk mendeteksi objek, teks, wajah, dan lainnya.</p>
+            <p><strong>API URL:</strong> <code>https://vision.googleapis.com/v1/</code></p>
+            <p><strong>Cara mendapatkan API Key:</strong></p>
+            <ol>
+                <li>Kunjungi <a href="https://cloud.google.com/vision/docs/pdf?hl=id" target="_blank">Google Cloud Console</a></li>
+                <li>Buat atau pilih proyek baru.</li>
+                <li>Aktifkan "Vision API" untuk proyek tersebut.</li>
+                <li>Di bagian "Credentials", buat API Key baru.</li>
+                <li>Salin API Key yang diberikan.</li>
+            </ol>
+        </li>
+
+        <li>
+            <strong>Google Gemini API</strong>  
+            <p>Menyediakan akses ke model AI terbaru dari Google untuk berbagai aplikasi.</p>
+            <p><strong>API URL:</strong> <code>https://generativelanguage.googleapis.com/v1/</code></p>
+            <p><strong>Cara mendapatkan API Key:</strong></p>
+            <ol>
+                <li>Kunjungi <a href="https://www.geminiforwork.gwaddons.com/setup-api-keys/create-geminiai-api-key" target="_blank">Google AI Studio</a></li>
+                <li>Masuk dengan akun Google.</li>
+                <li>Klik "Get API Key" dan ikuti petunjuknya.</li>
+                <li>Salin API Key yang diberikan.</li>
+            </ol>
+        </li>
+    </ul>
+
+    <h3>📄 PDF & Image APIs</h3>
+    <ul>
+        <li>
+            <strong>Aspose.PDF Cloud API</strong>  
+            <p>Menyediakan layanan untuk membuat, mengedit, dan mengonversi PDF.</p>
+            <p><strong>API URL:</strong> <code>https://api.aspose.cloud/v3.0/pdf/</code></p>
+            <p><strong>Cara mendapatkan API Key:</strong></p>
+            <ol>
+                <li>Kunjungi <a href="https://products.aspose.cloud/pdf/id/" target="_blank">Aspose.PDF Cloud</a></li>
+                <li>Daftar akun gratis dan masuk ke dashboard.</li>
+                <li>Dapatkan API Key di bagian credential.</li>
+            </ol>
+        </li>
+
+        <li>
+            <strong>PDF.co API</strong>  
+            <p>API untuk mengedit dan memproses file PDF secara online.</p>
+            <p><strong>API URL:</strong> <code>https://api.pdf.co/v1/</code></p>
+            <p><strong>Cara mendapatkan API Key:</strong></p>
+            <ol>
+                <li>Kunjungi <a href="https://pdf.co/" target="_blank">PDF.co</a></li>
+                <li>Daftar akun dan masuk ke dashboard.</li>
+                <li>Buat API Key di pengaturan akun.</li>
+            </ol>
+        </li>
+
+        <li>
+            <strong>Remove.bg API</strong>  
+            <p>API untuk menghapus latar belakang gambar secara otomatis.</p>
+            <p><strong>API URL:</strong> <code>https://api.remove.bg/v1.0/</code></p>
+            <p><strong>Cara mendapatkan API Key:</strong></p>
+            <ol>
+                <li>Kunjungi <a href="https://www.remove.bg/api" target="_blank">Remove.bg</a></li>
+                <li>Daftar akun dan masuk ke dashboard.</li>
+                <li>Buat API Key baru di bagian pengaturan.</li>
+            </ol>
+        </li>
+
+        <li>
+            <strong>Unsplash API</strong>  
+            <p>API untuk mengakses jutaan gambar bebas lisensi dari Unsplash.</p>
+            <p><strong>API URL:</strong> <code>https://api.unsplash.com/</code></p>
+            <p><strong>Cara mendapatkan API Key:</strong></p>
+            <ol>
+                <li>Kunjungi <a href="https://unsplash.com/developers" target="_blank">Unsplash API</a></li>
+                <li>Daftar akun dan buat aplikasi baru.</li>
+                <li>Dapatkan API Key setelah aplikasi disetujui.</li>
+            </ol>
+        </li>
+
+        <li>
+            <strong>DeepAI Image API</strong>  
+            <p>API untuk menghasilkan gambar dari teks menggunakan AI.</p>
+            <p><strong>API URL:</strong> <code>https://api.deepai.org/api/text2img</code></p>
+            <p><strong>Cara mendapatkan API Key:</strong></p>
+            <ol>
+                <li>Kunjungi <a href="https://deepai.org/machine-learning-model/text2img" target="_blank">DeepAI API</a></li>
+                <li>Daftar akun dan buat API Key.</li>
+            </ol>
+        </li>
+
+        <li>
+            <strong>OCR Space API</strong>  
+            <p>API untuk mengubah gambar menjadi teks menggunakan OCR.</p>
+            <p><strong>API URL:</strong> <code>https://api.ocr.space/parse/image</code></p>
+            <p><strong>Cara mendapatkan API Key:</strong></p>
+            <ol>
+                <li>Kunjungi <a href="https://ocr.space/ocrapi" target="_blank">OCR Space API</a></li>
+                <li>Daftar akun dan buat API Key.</li>
+            </ol>
+        </li>
+    </ul>
+</div>
+
+
+
+<div id="about" class="content-section">
+    <div class="about-container">
+        <h1 class="about-title">
+            <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=30&pause=500&color=F70000&center=true&vCenter=true&width=435&lines=Hi+%F0%9F%91%8B%2C+I'm+ZayronVex22!;Welcome+to+ZVex+AI!" alt="Typing SVG" />
+        </h1>
+
+        <div class="profile-stats">
+            <img src="https://komarev.com/ghpvc/?username=ZayronVex22&label=Profile%20Views&color=0e75b6&style=flat" alt="Profile Views" />
+            <a href="https://github.com/ZayronVex22?tab=followers">
+                <img src="https://img.shields.io/github/followers/ZayronVex22?label=Followers&style=social" alt="GitHub Followers" />
+            </a>
+        </div>
+
+        <div class="about-content">
+            <h2>🚀 Tentang Saya</h2>
+            <ul>
+                <li>🌱 Sedang belajar <b>Machine Learning</b> & <b>Artificial Intelligence</b></li>
+                <li>👯 Terbuka untuk kolaborasi pada proyek <b>Open Source</b></li>
+                <li>💬 Tanya saya tentang <b>Python, JavaScript, dan Web Development</b></li>
+                <li>📫 Hubungi saya di: <b>zayronvex22@gmail.com</b></li>
+                <li>⚡ Fun fact: Saya suka ngoding sambil dengerin musik lo-fi 🎧</li>
+            </ul>
+        </div>
+
+        <div class="tech-stack">
+            <h2>🛠️ Teknologi dan Alat</h2>
+            <div class="tech-icons">
+                <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+                <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
+                <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
+                <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
+                <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+                <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+                <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" alt="Git" />
+                <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
+            </div>
+        </div>
+
+        <div class="github-stats">
+            <h2>📊 Statistik GitHub</h2>
+            <img src="https://github-readme-stats.vercel.app/api?username=ZayronVex22&show_icons=true&theme=radical" alt="Statistik GitHub" />
+        </div>
+
+        <div class="connect">
+            <h2>🌍 Terhubung dengan Saya</h2>
+            <a href="https://whatsapp.com/channel/0029Vb3s4ZV4SpkO3EqBVY1H">
+                <img src="https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp" />
+            </a>
+            <a href="mailto:zayronvex22@gmail.com">
+                <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+            </a>
+            <a href="https://github.com/ZayronVex22">
+                <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+            </a>
+        </div>
+    </div>
+</div>
+
+
+    <div id="history" class="content-section">
+        <h2>📜 Chat History</h2><button class="clear-history-btn" onclick="clearChatHistory()">🗑 Hapus History</button>
+
+        <div id="chatHistory"></div>
+    </div>
+</div>
+
+
+    <script>
+ 
+          const apiKey = "AIzaSyC0Cjd5U_kIM9tvqxfjjvQ_MlhabjtxA30";
+    const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey;
+
+let currentChat = [];
+let chatHistory = [];
+let isRequestPending = false;
+
+function createNewChat() {
+    if (currentChat.length > 0) {
+        chatHistory.push([...currentChat]);
+        updateChatHistory();
+    }
+    currentChat = [];
+    document.getElementById('chatContainer').innerHTML = '';
+}
+
+function updateChatHistory() {
+    const historyContainer = document.getElementById('chatHistory');
+    historyContainer.innerHTML = chatHistory.map((chat, index) => `
+        <div class="chat-item" onclick="loadChat(${index})">
+            Chat ${index + 1}
+        </div>
+    `).join('');
+}
+
+function loadChat(index) {
+    currentChat = [...chatHistory[index]];
+    document.getElementById('chatContainer').innerHTML = '';
+    currentChat.forEach(msg => addMessage(msg.text, msg.sender));
+}
+
+async function sendMessage() {
+    if (isRequestPending) return;
+    
+    const userInput = document.getElementById('userInput');
+    const message = userInput.value.trim();
+    if (!message) return;
+
+    userInput.value = '';
+    addMessage(message, 'user');
+    
+    try {
+        isRequestPending = true;
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: message }] }]
+            })
+        });
+
+        const data = await response.json();
+        let aiResponse = data.candidates[0].content.parts[0].text;
+
+        // AI Sekarang Bisa Semua
+        aiResponse = enhanceAIResponse(aiResponse, message);
+
+        addMessage(formatMessage(aiResponse), 'ai');
+        currentChat.push({ text: aiResponse, sender: 'ai' });
+    } catch (error) {
+        console.error('Error:', error);
+        addMessage('System Error: Please try again later', 'ai');
+    } finally {
+        isRequestPending = false;
+    }
+}
+
+function addMessage(text, sender) {
+    const chatContainer = document.getElementById('chatContainer');
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', `${sender}-message`);
+    messageDiv.innerHTML = `
+        <div class="message-content">${text}</div>
+        <div class="message-time">${new Date().toLocaleTimeString()}</div>
+    `;
+    
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    currentChat.push({ text, sender });
+}
+
+// Format AI Response: Bold, Code Block, & Source Code Separation
+function formatMessage(text) {
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong><br>');
+
+    text = text.replace(/```([\s\S]*?)```/g, function(match, code) {
+        return createCodeBlock(code, "General Code");
+    });
+
+    text = text.replace(/<html.*?<\/html>/gs, match => createCodeBlock(match, "HTML"));
+    text = text.replace(/<style.*?<\/style>/gs, match => createCodeBlock(match, "CSS"));
+    text = text.replace(/<script.*?<\/script>/gs, match => createCodeBlock(match, "JavaScript"));
+
+    return text;
+}
+
+// Buat Div untuk Code dengan Copy Button
+function createCodeBlock(code, type) {
+    return `
+        <div class="code-container">
+            <div class="code-header">${type} Source Code</div>
+            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+            <textarea class="code-textarea">${code}</textarea>
+        </div>
+    `;
+}
+
+// Copy to Clipboard Function
+function copyToClipboard(button) {
+    const textarea = button.nextElementSibling;
+    textarea.select();
+    document.execCommand("copy");
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+}
+
+// Handle Enter Key for Input
+document.getElementById('userInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+// AI Bisa Semua (Enhance Response)
+function enhanceAIResponse(response, question) {
+    const lowerQuestion = question.toLowerCase();
+
+    // Deteksi semua variasi pertanyaan tentang nama
+    if (
+        lowerQuestion.includes("siapa nama kamu") ||
+        lowerQuestion.includes("nama kamu siapa") ||
+        lowerQuestion.includes("siapa kamu") ||
+        lowerQuestion.includes("what is your name") ||
+        lowerQuestion.includes("who are you") ||
+        lowerQuestion.includes("qual é o seu nome") ||
+        lowerQuestion.includes("wie heißt du") ||
+        lowerQuestion.includes("comment tu t'appelles") ||
+        lowerQuestion.includes("как тебя зовут") ||
+        lowerQuestion.includes("siapa lu") ||
+        lowerQuestion.includes("lu siapa") ||
+        lowerQuestion.includes("kamu siapa") ||
+        lowerQuestion.includes("who are u") ||
+        lowerQuestion.includes("name?") 
+    ) {
+        return "Saya adalah **ZVex AI** yang dilatih oleh **Dayat**";
+    }
+
+    // Respon jika ditanya kemampuan AI
+    if (
+        lowerQuestion.includes("bisa apa aja") ||
+        lowerQuestion.includes("lu bisa ngapain") ||
+        lowerQuestion.includes("what can you do") ||
+        lowerQuestion.includes("你会做什么") // (Mandarin: "Apa yang bisa kamu lakukan?")
+    ) {
+        return "Aku bisa melakukan hampir semua hal! Mulai dari menjawab pertanyaan umum, membuat kode pemrograman, menghitung rumus fisika, menjelaskan konsep biologi, hingga memberikan saran. Tanyakan saja! 🚀";
+    }
+
+    // Format khusus untuk permintaan kode
+    if (
+        lowerQuestion.includes("buatkan html") ||
+        lowerQuestion.includes("buatkan css") ||
+        lowerQuestion.includes("buatkan javascript") ||
+        lowerQuestion.includes("generate html") ||
+        lowerQuestion.includes("generate css") ||
+        lowerQuestion.includes("generate javascript")
+    ) {
+        return `Tentu! Berikut adalah kode yang kamu minta:\n\`\`\`${response}\`\`\``;
+    }
+
+    return response; // Jika bukan pertanyaan khusus, AI jawab normal
+}
+
+
+
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('hidden');
+}
+
+// Initial chat
+createNewChat();
+
+document.querySelector('.toggle-sidebar-btn').addEventListener('click', function() {
+    this.classList.toggle('clicked');
+});
+
+
+
+function showPage(pageId) {
+    // Sembunyikan semua section
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.style.display = 'none';
+    });
+
+    // Tampilkan hanya halaman yang dipilih
+    document.getElementById(pageId).style.display = 'block';
+}
+
+
+// Simpan chat ke localStorage
+function saveChatHistory(message, sender = "user") {
+    let history = JSON.parse(localStorage.getItem("chatHistory")) || [];
+    history.push({ sender, message, timestamp: new Date().toLocaleTimeString() });
+    localStorage.setItem("chatHistory", JSON.stringify(history));
+    loadChatHistory(); // Update tampilan setelah menyimpan
+}
+
+// Load chat dari localStorage ke tampilan
+function loadChatHistory() {
+    let historyContainer = document.getElementById("chatHistory");
+    let history = JSON.parse(localStorage.getItem("chatHistory")) || [];
+
+    historyContainer.innerHTML = ""; // Hapus dulu biar ngga duplikat
+    history.forEach(chat => {
+        let chatItem = document.createElement("div");
+        chatItem.classList.add("chat-item");
+        chatItem.innerHTML = `<strong>${chat.sender}:</strong> ${chat.message} <span class="time">${chat.timestamp}</span>`;
+        historyContainer.appendChild(chatItem);
+    });
+}
+
+// Panggil saat halaman dimuat
+document.addEventListener("DOMContentLoaded", loadChatHistory);
+
+// Hapus semua chat history
+function clearChatHistory() {
+    localStorage.removeItem("chatHistory"); // Hapus dari localStorage
+    document.getElementById("chatHistory").innerHTML = "<p class='empty-history'>Belum ada riwayat chat.</p>"; // Kosongkan tampilan
+}
+
+</script>
+<style>
+  /* Blinking Cyan Border */
+@keyframes blink-border {
+    0% { border-color: cyan; }
+    50% { border-color: transparent; }
+    100% { border-color: cyan; }
+}
+
+.code-container {
+    background: #1e1e1e;
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 10px;
+    font-family: monospace;
+    border: 2px solid cyan;
+    animation: blink-border 1s infinite;
+    position: relative;
+}
+
+.code-header {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: cyan;
+}
+
+.code-textarea {
+    width: 100%;
+    height: 150px;
+    background: #282c34;
+    color: #fff;
+    font-family: monospace;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    resize: none;
+    outline: none;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #00f7ff;
+    color: #000;
+    padding: 5px 10px;
+    font-size: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.copy-btn:hover {
+    background: #00d8e0;
+}
+
+.copy-btn:active {
+    background: #00c3c7;
+}
+
+</style>
+</body>
+</html>
